@@ -10,23 +10,27 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center justify-center bg-background overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background pointer-events-none" />
+      <section
+        className="relative min-h-[85vh] flex items-center justify-center overflow-hidden"
+        style={{ backgroundImage: "url('/hero-bg.jpeg')", backgroundSize: "cover", backgroundPosition: "center top" }}
+      >
+        <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/50 pointer-events-none" />
         
         <div className="container px-4 md:px-8 relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <span className="text-primary font-medium tracking-[0.25em] uppercase text-xs md:text-sm">Fine Art Gallery</span>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-foreground leading-tight">
+          <span className="text-[#c9a84c] font-medium tracking-[0.25em] uppercase text-xs md:text-sm">Fine Art Gallery</span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-tight">
             Light, Shadow &<br />
-            <span className="italic text-muted-foreground">Emotion</span>
+            <span className="italic text-[#c9a84c]">Emotion</span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl font-light leading-relaxed">
             The digital home of Ryno H Creations. A curated collection of original works spanning bold acrylics to delicate oils.
           </p>
           <div className="flex gap-4 pt-4">
-            <Button asChild size="lg" className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 font-medium tracking-wide">
+            <Button asChild size="lg" className="rounded-none bg-[#c9a84c] hover:bg-[#b8973d] text-white px-8 font-medium tracking-wide">
               <Link href="/gallery">View Gallery</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-none border-primary/20 hover:border-primary text-foreground px-8 font-medium tracking-wide">
+            <Button asChild size="lg" variant="outline" className="rounded-none border-white/40 hover:border-white text-white bg-transparent hover:bg-white/10 px-8 font-medium tracking-wide">
               <Link href="/about">The Artist</Link>
             </Button>
           </div>

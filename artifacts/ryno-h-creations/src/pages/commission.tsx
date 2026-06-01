@@ -29,15 +29,19 @@ export default function Commission() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Hero */}
-      <section className="py-20 md:py-28 bg-card border-b border-border/40">
-        <div className="container px-4 md:px-8 mx-auto max-w-3xl text-center space-y-6">
-          <span className="text-primary font-medium tracking-[0.25em] uppercase text-xs">
+      <section
+        className="relative py-28 md:py-40 border-b border-border/40 overflow-hidden"
+        style={{ backgroundImage: "url('/hero-bg.jpeg')", backgroundSize: "cover", backgroundPosition: "center top" }}
+      >
+        <div className="absolute inset-0 bg-black/65 pointer-events-none" />
+        <div className="container px-4 md:px-8 mx-auto max-w-3xl text-center space-y-6 relative z-10">
+          <span className="text-[#c9a84c] font-medium tracking-[0.25em] uppercase text-xs">
             Bespoke Artwork
           </span>
-          <h1 className="text-4xl md:text-6xl font-serif leading-tight">
+          <h1 className="text-4xl md:text-6xl font-serif leading-tight text-white">
             Commission a Painting
           </h1>
-          <p className="text-muted-foreground font-light leading-relaxed text-lg max-w-xl mx-auto">
+          <p className="text-white/75 font-light leading-relaxed text-lg max-w-xl mx-auto">
             Have something specific in mind? Ryno Henning takes on select commission work — a portrait, a landscape, a memory, or a vision entirely your own.
           </p>
         </div>

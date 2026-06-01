@@ -3,9 +3,15 @@ export default function About() {
     <div className="flex flex-col min-h-screen bg-background">
       <section className="py-20 md:py-32 container px-4 md:px-8 mx-auto max-w-4xl">
         <div className="space-y-12">
-          <div className="text-center space-y-6 mb-16">
-            <h1 className="text-4xl md:text-6xl font-serif">The Artist</h1>
-            <div className="h-px w-24 bg-primary mx-auto" />
+          <div
+            className="relative -mx-4 md:-mx-8 mb-16 py-28 md:py-40 overflow-hidden"
+            style={{ backgroundImage: "url('/hero-bg.jpeg')", backgroundSize: "cover", backgroundPosition: "center top" }}
+          >
+            <div className="absolute inset-0 bg-black/65 pointer-events-none" />
+            <div className="relative z-10 text-center space-y-6 px-4">
+              <h1 className="text-4xl md:text-6xl font-serif text-white">The Artist</h1>
+              <div className="h-px w-24 bg-[#c9a84c] mx-auto" />
+            </div>
           </div>
 
           <div className="prose prose-lg dark:prose-invert max-w-none prose-p:font-light prose-p:leading-loose prose-p:text-muted-foreground mx-auto font-sans">

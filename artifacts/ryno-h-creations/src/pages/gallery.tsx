@@ -6,10 +6,14 @@ export default function Gallery() {
 
   return (
     <div className="flex flex-col bg-background min-h-screen">
-      <section className="py-20 md:py-28 bg-card border-b border-border/40">
-        <div className="container px-4 md:px-8 text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-serif mb-6">The Gallery</h1>
-          <p className="text-lg text-muted-foreground font-light leading-relaxed">
+      <section
+        className="relative py-28 md:py-40 border-b border-border/40 overflow-hidden"
+        style={{ backgroundImage: "url('/hero-bg.jpeg')", backgroundSize: "cover", backgroundPosition: "center top" }}
+      >
+        <div className="absolute inset-0 bg-black/65 pointer-events-none" />
+        <div className="container px-4 md:px-8 text-center max-w-3xl mx-auto relative z-10">
+          <h1 className="text-4xl md:text-6xl font-serif mb-6 text-white">The Gallery</h1>
+          <p className="text-lg text-white/75 font-light leading-relaxed">
             Browse the complete collection of Ryno's available works. Each piece represents a unique conversation between light, shadow, feeling, and form.
           </p>
         </div>

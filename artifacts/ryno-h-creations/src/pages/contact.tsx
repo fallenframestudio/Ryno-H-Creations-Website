@@ -2,10 +2,20 @@ import { Button } from "@/components/ui/button";
 
 export default function Contact() {
   return (
-    <div className="flex flex-col min-h-[80vh] bg-background justify-center">
-      <div className="container px-4 md:px-8 mx-auto max-w-3xl py-20">
+    <div className="flex flex-col min-h-[80vh] bg-background">
+      <section
+        className="relative py-28 md:py-40 overflow-hidden"
+        style={{ backgroundImage: "url('/hero-bg.jpeg')", backgroundSize: "cover", backgroundPosition: "center top" }}
+      >
+        <div className="absolute inset-0 bg-black/65 pointer-events-none" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-4xl md:text-6xl font-serif text-white mb-4">Get in Touch</h1>
+          <div className="h-px w-24 bg-[#c9a84c] mx-auto" />
+        </div>
+      </section>
+      <div className="container px-4 md:px-8 mx-auto max-w-3xl py-16">
         <div className="bg-card border border-border/40 p-8 md:p-16 text-center shadow-sm">
-          <h1 className="text-3xl md:text-5xl font-serif mb-6">Get in Touch</h1>
+          <h1 className="sr-only">Get in Touch</h1>
           <p className="text-muted-foreground font-light mb-12 max-w-lg mx-auto">
             Whether you are interested in acquiring a piece, commissioning a custom work, or simply discussing the art, Ryno welcomes your inquiry.
           </p>
