@@ -33,39 +33,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 md:py-24 border-y border-border/40 bg-card">
-        <div className="container px-4 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
-            <div className="space-y-2">
-              <p className="text-sm tracking-widest uppercase text-muted-foreground font-medium">Collection</p>
-              <p className="text-3xl md:text-4xl font-serif text-primary">
-                {isStatsLoading ? "..." : stats?.total || 0}
-              </p>
-              <p className="text-xs text-muted-foreground">Original works</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm tracking-widest uppercase text-muted-foreground font-medium">Starting</p>
-              <p className="text-3xl md:text-4xl font-serif text-foreground">
-                {isStatsLoading ? "..." : `R ${stats?.minPrice?.toLocaleString('en-ZA') || 0}`}
-              </p>
-              <p className="text-xs text-muted-foreground">Accessible fine art</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm tracking-widest uppercase text-muted-foreground font-medium">Average</p>
-              <p className="text-3xl md:text-4xl font-serif text-foreground">
-                {isStatsLoading ? "..." : `R ${Math.round(stats?.avgPrice || 0).toLocaleString('en-ZA')}`}
-              </p>
-              <p className="text-xs text-muted-foreground">Investment value</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm tracking-widest uppercase text-muted-foreground font-medium">Masterpieces</p>
-              <p className="text-3xl md:text-4xl font-serif text-primary">
-                {isStatsLoading ? "..." : `R ${stats?.maxPrice?.toLocaleString('en-ZA') || 0}`}
-              </p>
-              <p className="text-xs text-muted-foreground">Premium collection</p>
-            </div>
-          </div>
+      {/* Works count strip */}
+      <section className="py-8 border-y border-border/40 bg-card">
+        <div className="container px-4 md:px-8 text-center">
+          <p className="text-sm tracking-widest uppercase text-muted-foreground font-medium">
+            {isStatsLoading ? "" : `${stats?.total || 0} Original Works Available`}
+          </p>
         </div>
       </section>
 

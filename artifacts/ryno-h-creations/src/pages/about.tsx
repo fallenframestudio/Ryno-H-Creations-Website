@@ -10,7 +10,7 @@ export default function About() {
 
           <div className="prose prose-lg dark:prose-invert max-w-none prose-p:font-light prose-p:leading-loose prose-p:text-muted-foreground mx-auto font-sans">
             <p className="text-xl md:text-2xl text-foreground font-serif italic mb-10 text-center leading-relaxed">
-              "Ryno Hellestrand discovered his remarkable gift for painting at the age of 50 — proof that creativity has no expiry date."
+              "Ryno Henning discovered his remarkable gift for painting at the age of 50 — proof that creativity has no expiry date."
             </p>
 
             <p>

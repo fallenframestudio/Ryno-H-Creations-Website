@@ -35,6 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <Link href="/gallery" className="hover:text-primary transition-colors">Gallery</Link>
             <Link href="/about" className="hover:text-primary transition-colors">About</Link>
             <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
+            <Link href="/admin" className="hover:text-primary transition-colors">Admin</Link>
           </div>
         </div>
       </footer>
