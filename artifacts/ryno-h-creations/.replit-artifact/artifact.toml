@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Ryno H Creations"
+version = "1.0.0"
+id = "artifacts/ryno-h-creations"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21454
+
+[services.development]
+run = "pnpm --filter @workspace/ryno-h-creations run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ryno-h-creations", "run", "build" ]
+publicDir = "artifacts/ryno-h-creations/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21454"
+BASE_PATH = "/"

@@ -3,13 +3,18 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: API specification for Ryno H Creations
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: paintings
+    description: Painting gallery operations
+  - name: admin
+    description: Admin operations
+
 paths:
   /healthz:
     get:
@@ -24,6 +29,157 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /paintings:
+    get:
+      operationId: listPaintings
+      tags: [paintings]
+      summary: List all paintings
+      description: Returns all paintings in the gallery
+      responses:
+        "200":
+          description: List of paintings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Painting"
+
+  /paintings/featured:
+    get:
+      operationId: getFeaturedPaintings
+      tags: [paintings]
+      summary: Get featured paintings
+      description: Returns a selection of featured paintings for the homepage
+      responses:
+        "200":
+          description: Featured paintings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Painting"
+
+  /paintings/stats:
+    get:
+      operationId: getPaintingStats
+      tags: [paintings]
+      summary: Get gallery statistics
+      description: Returns total counts and price summary for the gallery
+      responses:
+        "200":
+          description: Gallery statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GalleryStats"
+
+  /paintings/{id}:
+    get:
+      operationId: getPainting
+      tags: [paintings]
+      summary: Get a single painting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Painting found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Painting"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updatePainting
+      tags: [admin]
+      summary: Update a painting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaintingUpdate"
+      responses:
+        "200":
+          description: Updated painting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Painting"
+        "404":
+          description: Not found
+
+    delete:
+      operationId: deletePainting
+      tags: [admin]
+      summary: Delete a painting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCredentials"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+        "401":
+          description: Unauthorized
+
+  /admin/paintings:
+    post:
+      operationId: createPainting
+      tags: [admin]
+      summary: Create a new painting (metadata only, image uploaded separately)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaintingInput"
+      responses:
+        "201":
+          description: Created painting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Painting"
+
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +190,77 @@ components:
       required:
         - status
 
+    Painting:
+      type: object
+      required: [id, title, price, imageUrl, featured, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        price:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        featured:
+          type: boolean
+        createdAt:
+          type: string
+
+    PaintingInput:
+      type: object
+      required: [title, price]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        price:
+          type: number
+        featured:
+          type: boolean
+
+    PaintingUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        price:
+          type: number
+        featured:
+          type: boolean
+
+    GalleryStats:
+      type: object
+      required: [total, minPrice, maxPrice, avgPrice]
+      properties:
+        total:
+          type: integer
+        minPrice:
+          type: number
+        maxPrice:
+          type: number
+        avgPrice:
+          type: number
+
+    AdminCredentials:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    AdminSession:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
