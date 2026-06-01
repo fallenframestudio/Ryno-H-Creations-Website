@@ -11,8 +11,8 @@ import { UPLOADS_DIR } from "./paintings";
 
 const router: IRouter = Router();
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "admin";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "RynoH2024!";
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "rynohcreations@gmail.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Ryno@9577";
 const JWT_SECRET = process.env.SESSION_SECRET ?? "ryno-h-creations-secret-2024";
 
 const storage = multer.diskStorage({
