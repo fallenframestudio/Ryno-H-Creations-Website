@@ -1,13 +1,11 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { db, paintingsTable } from "@workspace/db";
 import { AdminLoginBody, CreatePaintingBody } from "@workspace/api-zod";
 import { logger } from "../lib/logger";
-import { UPLOADS_DIR } from "./paintings";
+import { uploadToCloudinary, deleteFromCloudinary } from "../lib/cloudinary";
 
 const router: IRouter = Router();
 
@@ -15,14 +13,7 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "rynohcreations@gmail.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Ryno@9577";
 const JWT_SECRET = process.env.SESSION_SECRET ?? "ryno-h-creations-secret-2024";
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `painting-${Date.now()}${ext}`);
-  },
-});
-const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   const auth = req.headers.authorization;
@@ -100,23 +91,21 @@ router.post(
       return;
     }
 
-    const imageUrl = `/api/uploads/${req.file.filename}`;
-
     const [existing] = await db.select().from(paintingsTable).where(eq(paintingsTable.id, id));
     if (!existing) {
-      fs.unlink(req.file.path, () => {});
       res.status(404).json({ error: "Painting not found" });
       return;
     }
 
-    if (existing.imageUrl) {
-      const oldFile = path.join(UPLOADS_DIR, path.basename(existing.imageUrl));
-      fs.unlink(oldFile, () => {});
+    if (existing.cloudinaryPublicId) {
+      await deleteFromCloudinary(existing.cloudinaryPublicId).catch(() => {});
     }
+
+    const { url, publicId } = await uploadToCloudinary(req.file.buffer, req.file.originalname);
 
     const [painting] = await db
       .update(paintingsTable)
-      .set({ imageUrl })
+      .set({ imageUrl: url, cloudinaryPublicId: publicId })
       .where(eq(paintingsTable.id, id))
       .returning();
 

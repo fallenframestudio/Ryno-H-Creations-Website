@@ -1,8 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, desc, avg, min, max, count, sql } from "drizzle-orm";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { eq, desc, avg, min, max, count } from "drizzle-orm";
 import { db, paintingsTable } from "@workspace/db";
 import {
   ListPaintingsResponse,
@@ -14,25 +11,10 @@ import {
   UpdatePaintingBody,
   UpdatePaintingResponse,
   DeletePaintingParams,
-  CreatePaintingBody,
 } from "@workspace/api-zod";
-import { logger } from "../lib/logger";
+import { deleteFromCloudinary } from "../lib/cloudinary";
 
 const router: IRouter = Router();
-
-const UPLOADS_DIR = path.resolve(process.cwd(), "uploads");
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `painting-${Date.now()}${ext}`);
-  },
-});
-const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
 
 function paintingToResponse(p: typeof paintingsTable.$inferSelect) {
   return {
@@ -46,7 +28,7 @@ function paintingToResponse(p: typeof paintingsTable.$inferSelect) {
   };
 }
 
-router.get("/paintings", async (req, res): Promise<void> => {
+router.get("/paintings", async (_req, res): Promise<void> => {
   const rows = await db.select().from(paintingsTable).orderBy(desc(paintingsTable.createdAt));
   res.json(ListPaintingsResponse.parse(rows.map(paintingToResponse)));
 });
@@ -151,13 +133,11 @@ router.delete("/paintings/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  if (painting.imageUrl) {
-    const filePath = path.join(UPLOADS_DIR, path.basename(painting.imageUrl));
-    fs.unlink(filePath, () => {});
+  if (painting.cloudinaryPublicId) {
+    await deleteFromCloudinary(painting.cloudinaryPublicId).catch(() => {});
   }
 
   res.sendStatus(204);
 });
 
-export { UPLOADS_DIR };
 export default router;
