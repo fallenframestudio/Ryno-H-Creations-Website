@@ -4,7 +4,7 @@ services:
     runtime: node
     region: frankfurt
     plan: free
-    buildCommand: "cd artifacts/api-server && npm install --legacy-peer-deps && npm run build"
+    buildCommand: "npm install -g pnpm && pnpm install --frozen-lockfile && pnpm run typecheck:libs && pnpm --filter @workspace/api-server run build"
     startCommand: "node artifacts/api-server/dist/index.mjs"
     envVars:
       - key: NODE_ENV
@@ -20,6 +20,8 @@ services:
       - key: CLOUDINARY_API_KEY
         sync: false
       - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: ALLOWED_ORIGINS
         sync: false
       - key: DATABASE_URL
         fromDatabase:
