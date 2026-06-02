@@ -142,8 +142,7 @@ function CreatePaintingForm({ token }: { token: string }) {
       const formData = new FormData();
       formData.append("image", file);
 
-      const apiBase = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
-      const uploadRes = await fetch(`${apiBase}/api/admin/paintings/${painting.id}/image`, {
+      const uploadRes = await fetch(`/api/admin/paintings/${painting.id}/image`, {
         method: "POST",
         headers: { Authorization: "Bearer " + token },
         body: formData
