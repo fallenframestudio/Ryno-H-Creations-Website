@@ -12,4 +12,6 @@ export interface PaintingUpdate {
   description?: string;
   price?: number;
   featured?: boolean;
+  sold?: boolean;
+  orientation?: string;
 }

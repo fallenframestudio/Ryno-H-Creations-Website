@@ -15,5 +15,7 @@ export interface Painting {
   /** @nullable */
   imageUrl: string | null;
   featured: boolean;
+  sold: boolean;
+  orientation: string;
   createdAt: string;
 }

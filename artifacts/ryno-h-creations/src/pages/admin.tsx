@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "wouter";
+import React, { useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { 
   useAdminLogin, 
@@ -103,6 +102,27 @@ export default function Admin() {
   );
 }
 
+function OrientationToggle({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex rounded-none border border-input overflow-hidden">
+      <button
+        type="button"
+        onClick={() => onChange("portrait")}
+        className={`flex-1 py-2 text-sm font-medium transition-colors ${value === "portrait" ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"}`}
+      >
+        Portrait
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("landscape")}
+        className={`flex-1 py-2 text-sm font-medium transition-colors ${value === "landscape" ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"}`}
+      >
+        Landscape
+      </button>
+    </div>
+  );
+}
+
 function CreatePaintingForm({ token }: { token: string }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -112,6 +132,8 @@ function CreatePaintingForm({ token }: { token: string }) {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [featured, setFeatured] = useState(false);
+  const [sold, setSold] = useState(false);
+  const [orientation, setOrientation] = useState("portrait");
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -127,17 +149,17 @@ function CreatePaintingForm({ token }: { token: string }) {
     }
 
     try {
-      // 1. Create painting record
       const painting = await createMutation.mutateAsync({
         data: {
           title,
           description: description || undefined,
           price: Number(price),
-          featured
+          featured,
+          sold,
+          orientation
         }
       });
 
-      // 2. Upload image
       setIsUploading(true);
       const formData = new FormData();
       formData.append("image", file);
@@ -153,11 +175,12 @@ function CreatePaintingForm({ token }: { token: string }) {
 
       toast({ title: "Painting added successfully" });
       
-      // Reset form
       setTitle("");
       setDescription("");
       setPrice("");
       setFeatured(false);
+      setSold(false);
+      setOrientation("portrait");
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       
@@ -189,12 +212,22 @@ function CreatePaintingForm({ token }: { token: string }) {
             <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} className="rounded-none resize-none" rows={3} />
           </div>
           <div className="space-y-2">
+            <Label>Orientation</Label>
+            <OrientationToggle value={orientation} onChange={setOrientation} />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="image">Image File *</Label>
             <Input id="image" type="file" accept="image/*" ref={fileInputRef} onChange={e => setFile(e.target.files?.[0] || null)} required className="rounded-none cursor-pointer" />
           </div>
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox id="featured" checked={featured} onCheckedChange={(c) => setFeatured(!!c)} />
-            <Label htmlFor="featured" className="cursor-pointer">Feature on homepage</Label>
+          <div className="flex flex-col gap-3 pt-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox id="featured" checked={featured} onCheckedChange={(c) => setFeatured(!!c)} />
+              <Label htmlFor="featured" className="cursor-pointer">Feature on homepage</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="sold" checked={sold} onCheckedChange={(c) => setSold(!!c)} />
+              <Label htmlFor="sold" className="cursor-pointer">Mark as Sold</Label>
+            </div>
           </div>
           <Button type="submit" className="w-full rounded-none mt-4" disabled={createMutation.isPending || isUploading}>
             {(createMutation.isPending || isUploading) ? "Uploading..." : "Publish to Gallery"}
@@ -232,7 +265,26 @@ function PaintingList({ token }: { token: string }) {
   const handleToggleFeatured = (id: number, currentFeatured: boolean) => {
     updateMutation.mutate({ id, data: { featured: !currentFeatured } }, {
       onSuccess: () => {
-        toast({ title: "Status updated" });
+        toast({ title: "Featured status updated" });
+        queryClient.invalidateQueries({ queryKey: getListPaintingsQueryKey() });
+      }
+    });
+  };
+
+  const handleToggleSold = (id: number, currentSold: boolean) => {
+    updateMutation.mutate({ id, data: { sold: !currentSold } }, {
+      onSuccess: () => {
+        toast({ title: currentSold ? "Marked as available" : "Marked as sold" });
+        queryClient.invalidateQueries({ queryKey: getListPaintingsQueryKey() });
+      }
+    });
+  };
+
+  const handleToggleOrientation = (id: number, currentOrientation: string) => {
+    const next = currentOrientation === "landscape" ? "portrait" : "landscape";
+    updateMutation.mutate({ id, data: { orientation: next } }, {
+      onSuccess: () => {
+        toast({ title: `Orientation set to ${next}` });
         queryClient.invalidateQueries({ queryKey: getListPaintingsQueryKey() });
       }
     });
@@ -255,14 +307,20 @@ function PaintingList({ token }: { token: string }) {
     <div className="space-y-4">
       <h2 className="text-xl font-serif mb-4">Current Inventory ({paintings?.length || 0})</h2>
       {paintings?.map(painting => (
-        <div key={painting.id} className="flex gap-4 p-4 border border-border/40 bg-card hover:bg-muted/20 transition-colors">
-          <div className="w-20 h-20 bg-muted shrink-0 flex items-center justify-center overflow-hidden">
+        <div key={painting.id} className={`flex gap-4 p-4 border bg-card hover:bg-muted/20 transition-colors ${painting.sold ? "border-border/20 opacity-70" : "border-border/40"}`}>
+          <div className="w-20 h-20 bg-muted shrink-0 flex items-center justify-center overflow-hidden relative">
             {painting.imageUrl ? (
               <img src={painting.imageUrl} alt={painting.title} className="w-full h-full object-cover" />
             ) : <span className="text-xs text-muted-foreground">No img</span>}
+            {painting.sold && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span className="text-white text-[10px] font-bold tracking-wider">SOLD</span>
+              </div>
+            )}
           </div>
-          <div className="flex-1 flex flex-col justify-center">
-            <h3 className="font-medium">{painting.title}</h3>
+          <div className="flex-1 flex flex-col justify-center min-w-0">
+            <h3 className="font-medium truncate">{painting.title}</h3>
+            <p className="text-xs text-muted-foreground mt-0.5 capitalize">{painting.orientation}</p>
             {editingId === painting.id ? (
               <div className="flex items-center gap-2 mt-2">
                 <Input 
@@ -290,6 +348,20 @@ function PaintingList({ token }: { token: string }) {
               />
               <Label htmlFor={`feat-${painting.id}`} className="cursor-pointer text-xs">Featured</Label>
             </div>
+            <div className="flex items-center gap-2 text-xs">
+              <Checkbox 
+                id={`sold-${painting.id}`} 
+                checked={painting.sold} 
+                onCheckedChange={() => handleToggleSold(painting.id, painting.sold)} 
+              />
+              <Label htmlFor={`sold-${painting.id}`} className="cursor-pointer text-xs">Sold</Label>
+            </div>
+            <button
+              onClick={() => handleToggleOrientation(painting.id, painting.orientation)}
+              className="text-[10px] tracking-wide uppercase text-muted-foreground border border-border/40 px-2 py-1 hover:border-primary hover:text-primary transition-colors"
+            >
+              {painting.orientation === "landscape" ? "↔ Land" : "↕ Port"}
+            </button>
             <Button size="sm" variant="destructive" onClick={() => handleDelete(painting.id)} className="h-7 text-xs rounded-none">
               Delete
             </Button>

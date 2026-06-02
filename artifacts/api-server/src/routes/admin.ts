@@ -59,6 +59,8 @@ router.post("/admin/paintings", requireAdmin, async (req, res): Promise<void> =>
       description: body.data.description ?? null,
       price: String(body.data.price),
       featured: body.data.featured ?? false,
+      sold: body.data.sold ?? false,
+      orientation: body.data.orientation ?? "portrait",
     })
     .returning();
 
@@ -69,6 +71,8 @@ router.post("/admin/paintings", requireAdmin, async (req, res): Promise<void> =>
     price: Number(painting.price),
     imageUrl: painting.imageUrl ?? null,
     featured: painting.featured,
+    sold: painting.sold,
+    orientation: painting.orientation,
     createdAt: painting.createdAt.toISOString(),
   });
 });
@@ -116,6 +120,8 @@ router.post(
       price: Number(painting.price),
       imageUrl: painting.imageUrl ?? null,
       featured: painting.featured,
+      sold: painting.sold,
+      orientation: painting.orientation,
       createdAt: painting.createdAt.toISOString(),
     });
   },

@@ -10,6 +10,8 @@ export const paintingsTable = pgTable("paintings", {
   imageUrl: text("image_url"),
   cloudinaryPublicId: text("cloudinary_public_id"),
   featured: boolean("featured").notNull().default(false),
+  sold: boolean("sold").notNull().default(false),
+  orientation: text("orientation").notNull().default("portrait"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

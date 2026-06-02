@@ -24,6 +24,8 @@ function paintingToResponse(p: typeof paintingsTable.$inferSelect) {
     price: Number(p.price),
     imageUrl: p.imageUrl ?? null,
     featured: p.featured,
+    sold: p.sold,
+    orientation: p.orientation,
     createdAt: p.createdAt.toISOString(),
   };
 }
@@ -101,6 +103,8 @@ router.patch("/paintings/:id", async (req, res): Promise<void> => {
   if (body.data.description !== undefined) updateData.description = body.data.description;
   if (body.data.price !== undefined) updateData.price = String(body.data.price);
   if (body.data.featured !== undefined) updateData.featured = body.data.featured;
+  if (body.data.sold !== undefined) updateData.sold = body.data.sold;
+  if (body.data.orientation !== undefined) updateData.orientation = body.data.orientation;
 
   const [painting] = await db
     .update(paintingsTable)

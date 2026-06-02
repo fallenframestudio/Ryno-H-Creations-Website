@@ -5,6 +5,7 @@ import path from "path";
 import fs from "fs";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { pool } from "@workspace/db";
 
 const app: Express = express();
 
@@ -47,6 +48,20 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+async function runMigrations() {
+  try {
+    await pool.query(`
+      ALTER TABLE paintings ADD COLUMN IF NOT EXISTS sold boolean NOT NULL DEFAULT false;
+      ALTER TABLE paintings ADD COLUMN IF NOT EXISTS orientation text NOT NULL DEFAULT 'portrait';
+    `);
+    logger.info("Migrations applied successfully");
+  } catch (err) {
+    logger.error({ err }, "Migration failed");
+  }
+}
+
+runMigrations();
 
 app.use("/api", router);
 

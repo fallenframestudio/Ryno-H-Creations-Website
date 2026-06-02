@@ -28,6 +28,8 @@ export const ListPaintingsResponseItem = zod.object({
   "price": zod.number(),
   "imageUrl": zod.string().nullable(),
   "featured": zod.boolean(),
+  "sold": zod.boolean(),
+  "orientation": zod.string(),
   "createdAt": zod.string()
 })
 export const ListPaintingsResponse = zod.array(ListPaintingsResponseItem)
@@ -44,6 +46,8 @@ export const GetFeaturedPaintingsResponseItem = zod.object({
   "price": zod.number(),
   "imageUrl": zod.string().nullable(),
   "featured": zod.boolean(),
+  "sold": zod.boolean(),
+  "orientation": zod.string(),
   "createdAt": zod.string()
 })
 export const GetFeaturedPaintingsResponse = zod.array(GetFeaturedPaintingsResponseItem)
@@ -75,6 +79,8 @@ export const GetPaintingResponse = zod.object({
   "price": zod.number(),
   "imageUrl": zod.string().nullable(),
   "featured": zod.boolean(),
+  "sold": zod.boolean(),
+  "orientation": zod.string(),
   "createdAt": zod.string()
 })
 
@@ -93,7 +99,9 @@ export const UpdatePaintingBody = zod.object({
   "title": zod.string().min(1).optional(),
   "description": zod.string().optional(),
   "price": zod.number().optional(),
-  "featured": zod.boolean().optional()
+  "featured": zod.boolean().optional(),
+  "sold": zod.boolean().optional(),
+  "orientation": zod.string().optional()
 })
 
 export const UpdatePaintingResponse = zod.object({
@@ -103,6 +111,8 @@ export const UpdatePaintingResponse = zod.object({
   "price": zod.number(),
   "imageUrl": zod.string().nullable(),
   "featured": zod.boolean(),
+  "sold": zod.boolean(),
+  "orientation": zod.string(),
   "createdAt": zod.string()
 })
 
@@ -138,7 +148,7 @@ export const CreatePaintingBody = zod.object({
   "title": zod.string().min(1),
   "description": zod.string().optional(),
   "price": zod.number(),
-  "featured": zod.boolean().optional()
+  "featured": zod.boolean().optional(),
+  "sold": zod.boolean().optional(),
+  "orientation": zod.string().optional()
 })
-
-
