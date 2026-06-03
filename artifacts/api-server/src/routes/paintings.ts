@@ -16,13 +16,18 @@ import { deleteFromCloudinary } from "../lib/cloudinary";
 
 const router: IRouter = Router();
 
+function optimizeCloudinaryUrl(url: string | null): string | null {
+  if (!url) return null;
+  return url.replace("/upload/", "/upload/f_auto,q_auto,w_1400/");
+}
+
 function paintingToResponse(p: typeof paintingsTable.$inferSelect) {
   return {
     id: p.id,
     title: p.title,
     description: p.description ?? null,
     price: Number(p.price),
-    imageUrl: p.imageUrl ?? null,
+    imageUrl: optimizeCloudinaryUrl(p.imageUrl),
     featured: p.featured,
     sold: p.sold,
     orientation: p.orientation,
